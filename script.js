@@ -23,6 +23,7 @@ diceEl.classList.add('hidden');
 const scores = [0, 0];
 let currentScore = 0;
 let activePlayer = 0;
+let playing = true;
 
 const switchPlayer = function () {
   document.getElementById(`current--${activePlayer}`).textContent = 0;
@@ -34,35 +35,49 @@ const switchPlayer = function () {
 
 //ROLL DICE FUNCTIONALITY
 btnRoll.addEventListener('click', function () {
-  //1. GENERATING RANDOM DICEROLL
-  const dice = Math.trunc(Math.random() * 6) + 1;
-  console.log(dice);
+  if (playing) {
+    //1. GENERATING RANDOM DICEROLL
+    const dice = Math.trunc(Math.random() * 6) + 1;
+    console.log(dice);
 
-  //2. DISPLAY DICE
-  diceEl.classList.remove('hidden');
-  diceEl.src = `dice-${dice}.png`;
+    //2. DISPLAY DICE
+    diceEl.classList.remove('hidden');
+    diceEl.src = `dice-${dice}.png`;
 
-  //3. CHECK FOR ROLL 1
-  if (dice !== 1) {
-    //ADD DICE TO CURRENT SCORE
-    currentScore += dice;
-    document.getElementById(`current--${activePlayer}`).textContent =
-      currentScore;
-  } else {
-    //SWITCH TO NEXT PLAYER
-    switchPlayer();
+    //3. CHECK FOR ROLL 1
+    if (dice !== 1) {
+      //ADD DICE TO CURRENT SCORE
+      currentScore += dice;
+      document.getElementById(`current--${activePlayer}`).textContent =
+        currentScore;
+    } else {
+      //SWITCH TO NEXT PLAYER
+      switchPlayer();
+    }
   }
 });
 
 btnHold.addEventListener('click', function () {
-  //1.ADD CURRENT SCORE TO ACTIVE PLAYER
-  scores[activePlayer] += currentScore;
-  document.getElementById(`current--${activePlayer}`).textContent =
-    scores[activePlayer];
+  if (playing) {
+    //1.ADD CURRENT SCORE TO ACTIVE PLAYER
+    scores[activePlayer] += currentScore;
+    document.getElementById(`score--${activePlayer}`).textContent =
+      scores[activePlayer];
 
-  //2.CHECK IF PLAYER SCORE>=100
-  //FINISH THE GAME
-
-  //SWITCH PLAYER
-  switchPlayer();
+    //2.CHECK IF PLAYER SCORE>=100
+    if (scores[activePlayer] >= 10) {
+      //FINISH THE GAME
+      playing = false;
+      diceEl.classList.add('hidden');
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.add('player--winner');
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.add('player--active');
+    } else {
+      //SWITCH PLAYER
+      switchPlayer();
+    }
+  }
 });
